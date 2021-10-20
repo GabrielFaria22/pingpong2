@@ -1,7 +1,7 @@
 <?php
     class Game{
 
-        private $connection;
+        public $connection;
 
         public $dbTable = "game";
 
@@ -26,7 +26,7 @@
 
         public function getSingleGame()
         {
-            $sqlQuery = "SELECT * FROM " . $this->dbTable . "WHERE id = ?";
+            $sqlQuery = "SELECT * FROM " . $this->dbTable . " WHERE id = ?";
             $stmt = $this->connection->prepare($sqlQuery);
             $stmt->bindParam(1, $this->id);
             $stmt->execute();
@@ -35,14 +35,28 @@
 
         public function getFirstGame()
         {
-            $sqlQuery = "SELECT * FROM " . $this->dbTable . " WHERE id = ?";
+            global $pdo;
+            $sqlQuery = "SELECT * FROM " . $this->dbTable . " WHERE id = 1";
             $stmt = $this->connection->prepare($sqlQuery);
-            $stmt->bindParam(1, 1);
             $stmt->execute();
-            var_dump($this->dbTable);
-            exit;
+            if ($stmt->rowCount() > 0){
+                $array = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                return $array[0];
+            }
             return $stmt;
         }
+
+        public function update($jogo) {
+            $sql = 'UPDATE game SET score_a = :score_a, score_b = :score_b, turn = :turn, shoots = :shoots WHERE id = :id';
+            $stmt = $this->connection->prepare($sql);
+            $stmt->bindValue('id', $jogo['id']);
+            $stmt->bindValue('score_a', $jogo['score_a']);
+            $stmt->bindValue('score_b', $jogo['score_b']);
+            $stmt->bindValue('turn', $jogo['turn']);
+            $stmt->bindValue('shoots', $jogo['shoots']);
+        
+            $stmt->execute();
+          }
 
         public function createGame()
         {
