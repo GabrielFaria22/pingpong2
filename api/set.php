@@ -16,8 +16,11 @@
 
     $game = new Game($db);
 
+    //$query = $game->getFirstGame();
+    
     $game->getFirstGame();
-    $jogo = $game->getFirstGame();
+
+    //$game = json_decode(json_encode($query), FALSE);
 
     $scoreParams = $data->score;
 
@@ -33,10 +36,10 @@
 
     if (!empty($message)){
 
-        $jogo['score_a'] = 0;
-        $jogo['score_b'] = 0;
-        $jogo['turn'] = 0;
-        $jogo['shoots'] = 0;
+        $game->score_a = 0;
+        $game->score_b = 0;
+        $game->turn = 0;
+        $game->shoots = 0;
 
         $game->update($jogo);
 
@@ -46,28 +49,25 @@
 
     }
 
-    $jogo['turn'] = empty(intval($jogo['turn'])) ? false : true;
+    $game->turn = empty(intval($game->turn)) ? false : true;
 
-    $jogo['score_a'] = $scorePlayerA;
-    $jogo['score_b'] = $scorePlayerB;
+    $game->score_a = $scorePlayerA;
+    $game->score_b = $scorePlayerB;
 
-    if (($jogo['score_a'] >= 20 && $jogo['score_b'] >= 20 && $jogo['shoots'] >= 1) || ($jogo['shoots'] >= 4)){
+    if (($game->score_a >= 20 && $game->score_b >= 20 && $game->shoots >= 1) || ($game->shoots >= 4)){
 
-        $jogo['turn'] = !$jogo['turn'];
-        $jogo['shoots'] = 0;
+        $game->turn = !$game->turn;
+        $game->shoots = 0;
 
     }else{
 
-        $jogo['shoots'] = $jogo['shoots'] + 1;
+        $game->shoots = $game->shoots + 1;
 
     }
 
-    /* $jogo['score_b'] = 20;
-    $jogo['id'] = 2; */
-
     $game->update($jogo);
 
-    $player = $jogo['turn'] ? 'b' : 'a';
+    $player = $game->turn ? 'b' : 'a';
 
     echo "player " . $player;
 

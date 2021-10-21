@@ -35,32 +35,37 @@
 
         public function getFirstGame()
         {
-            global $pdo;
             $sqlQuery = "SELECT * FROM " . $this->dbTable . " WHERE id = 1";
             $stmt = $this->connection->prepare($sqlQuery);
             $stmt->execute();
             if ($stmt->rowCount() > 0){
-                $array = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                return $array[0];
+                $arrayObj = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
+
+                $this->id = $arrayObj['id'];
+                $this->score_a = $arrayObj['score_a'];
+                $this->score_b = $arrayObj['score_b'];
+                $this->turn = $arrayObj['turn'];
+                $this->shoots = $arrayObj['shoots'];
+
+                return $arrayObj;
             }
             return $stmt;
         }
 
-        public function update($jogo) {
+        public function update() {
             $sql = 'UPDATE game SET score_a = :score_a, score_b = :score_b, turn = :turn, shoots = :shoots WHERE id = :id';
             $stmt = $this->connection->prepare($sql);
-            $stmt->bindValue('id', $jogo['id']);
-            $stmt->bindValue('score_a', $jogo['score_a']);
-            $stmt->bindValue('score_b', $jogo['score_b']);
-            $stmt->bindValue('turn', $jogo['turn']);
-            $stmt->bindValue('shoots', $jogo['shoots']);
+            $stmt->bindValue('id', $this->id);
+            $stmt->bindValue('score_a', $this->score_a);
+            $stmt->bindValue('score_b', $this->score_b);
+            $stmt->bindValue('turn', $this->turn);
+            $stmt->bindValue('shoots', $this->shoots);
         
             $stmt->execute();
-          }
+        }
 
         public function createGame()
-        {
-            //$sqlQuery = "INSERT INTO ". $this->dbTable ." VALUES :id";        
+        {     
             $sqlQuery = "INSERT INTO " . $this->dbTable . "(id) VALUES(?)";
             $stmt = $this->connection->prepare($sqlQuery);
             $this->id=htmlspecialchars(strip_tags($this->id));
